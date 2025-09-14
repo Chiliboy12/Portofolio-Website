@@ -27,7 +27,15 @@ export function Contact() {
     setIsLoading(true)
     setStatus({ type: null, message: '' })
 
+    // Debug: Log environment variables
+    console.log('Service ID:', process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID)
+    console.log('Template ID:', process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID)
+    console.log('Public Key:', process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY)
+
     try {
+      // Initialize EmailJS with public key
+      emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!)
+
       // EmailJS configuration
       const result = await emailjs.send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
@@ -37,18 +45,17 @@ export function Contact() {
           from_email: formData.email,
           subject: formData.subject,
           message: formData.message,
-          to_email: 'Andika.saputra18072000@gmail.com',
-        },
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+          to_name: 'Andika Saputra',
+          reply_to: formData.email,
+        }
       )
 
-      if (result.status === 200) {
-        setStatus({ type: 'success', message: 'Pesan berhasil dikirim! Terima kasih atas pesan Anda.' })
-        setFormData({ name: "", email: "", subject: "", message: "" })
-      }
+      console.log('EmailJS result:', result)
+      setStatus({ type: 'success', message: 'Pesan berhasil dikirim! Terima kasih atas pesan Anda.' })
+      setFormData({ name: "", email: "", subject: "", message: "" })
     } catch (error) {
       console.error('EmailJS error:', error)
-      setStatus({ type: 'error', message: 'Gagal mengirim pesan. Silakan coba lagi atau hubungi langsung via email.' })
+      setStatus({ type: 'error', message: `Gagal mengirim pesan: ${error}. Silakan coba lagi atau hubungi langsung via email.` })
     } finally {
       setIsLoading(false)
     }

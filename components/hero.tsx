@@ -29,8 +29,6 @@ export function Hero() {
 
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 text-balance">
             Sarjana Teknik Informatika yang bersemangat dalam pengembangan software dan teknologi inovatif
-            <br />
-            <span className="block mt-2">Lokasi: <span className="font-semibold">Makassar, Indonesia</span></span>
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">

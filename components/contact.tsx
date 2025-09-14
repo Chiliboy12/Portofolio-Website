@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Mail, Phone, MapPin, Send } from "lucide-react"
+import emailjs from '@emailjs/browser'
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -17,13 +18,40 @@ export function Contact() {
     subject: "",
     message: "",
   })
+  
+  const [isLoading, setIsLoading] = useState(false)
+  const [status, setStatus] = useState<{ type: 'success' | 'error' | null, message: string }>({ type: null, message: '' })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log("Form submitted:", formData)
-    // Reset form
-    setFormData({ name: "", email: "", subject: "", message: "" })
+    setIsLoading(true)
+    setStatus({ type: null, message: '' })
+
+    try {
+      // EmailJS configuration
+      const result = await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          to_email: 'Andika.saputra18072000@gmail.com',
+        },
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+      )
+
+      if (result.status === 200) {
+        setStatus({ type: 'success', message: 'Pesan berhasil dikirim! Terima kasih atas pesan Anda.' })
+        setFormData({ name: "", email: "", subject: "", message: "" })
+      }
+    } catch (error) {
+      console.error('EmailJS error:', error)
+      setStatus({ type: 'error', message: 'Gagal mengirim pesan. Silakan coba lagi atau hubungi langsung via email.' })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -149,9 +177,15 @@ export function Contact() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full">
+                  {status.type && (
+                    <div className={`p-3 rounded-md ${status.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+                      {status.message}
+                    </div>
+                  )}
+
+                  <Button type="submit" className="w-full" disabled={isLoading}>
                     <Send className="mr-2 h-4 w-4" />
-                    Kirim Pesan
+                    {isLoading ? 'Mengirim...' : 'Kirim Pesan'}
                   </Button>
                 </form>
               </CardContent>

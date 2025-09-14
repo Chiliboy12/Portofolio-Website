@@ -43,7 +43,7 @@ export function Hero() {
               className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
               asChild
             >
-              <a href="/Andika-S-cv.pdf" download>
+              <a href="/Andika S cv.pdf" download>
                 <Download className="mr-2 h-4 w-4" />
                 Download CV
               </a>

@@ -41,9 +41,12 @@ export function Hero() {
               size="lg"
               variant="outline"
               className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
+              asChild
             >
-              <Download className="mr-2 h-4 w-4" />
-              Download CV
+              <a href="/Andika-S-cv.pdf" download>
+                <Download className="mr-2 h-4 w-4" />
+                Download CV
+              </a>
             </Button>
           </div>
 
